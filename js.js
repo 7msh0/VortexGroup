@@ -1,8 +1,7 @@
 // ============================================
-// VORTEX GROUP WEBSITE - MAIN JAVASCRIPT FILE
+// VORTEX GROUP WEBSITE - ENHANCED JAVASCRIPT
 // ============================================
 
-// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Vortex Group Website Initializing...');
     
@@ -14,13 +13,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', currentTheme);
     updateThemeButton();
     
-    // Theme toggle function
     function toggleTheme() {
         console.log('Theme toggle clicked!');
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', currentTheme);
         localStorage.setItem('theme', currentTheme);
         updateThemeButton();
+        
+        // Add transition effect
+        document.body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+        setTimeout(() => {
+            document.body.style.transition = '';
+        }, 500);
     }
     
     function updateThemeButton() {
@@ -44,15 +48,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const langToggle = document.getElementById('langToggle');
     let currentLang = localStorage.getItem('lang') || 'en';
     
+    // FIX 1: Set the data-lang attribute on the HTML element IMMEDIATELY on page load
+    document.documentElement.setAttribute('data-lang', currentLang); // ← NEW
     // Initialize language
     updateLanguage();
     
-    // Language toggle function
     function toggleLanguage() {
         console.log('Language toggle clicked!');
         currentLang = currentLang === 'en' ? 'ar' : 'en';
         localStorage.setItem('lang', currentLang);
+        
+        // FIX 2: Update the data-lang attribute on the HTML element when toggling
+        document.documentElement.setAttribute('data-lang', currentLang); // ← Ensure this is here
+        
         updateLanguage();
+        
+        // DON'T change the direction - keep it LTR
+        console.log('Language changed to:', currentLang, 'Direction remains LTR');
     }
     
     function updateLanguage() {
@@ -89,12 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleMenu() {
         hamburger.classList.toggle('active');
         navMenu.classList.toggle('active');
+        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
         console.log('Menu toggled');
     }
     
     function closeMenu() {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        document.body.style.overflow = '';
     }
     
     // ========== PORTFOLIO SLIDER ==========
@@ -104,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.querySelector('.next-btn');
     const dots = document.querySelectorAll('.dot');
     let currentSlide = 0;
+    let slideInterval;
     
     function initSlider() {
         if (!sliderTrack || slides.length === 0) return;
@@ -111,10 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSlider();
         
         // Auto slide every 5 seconds
-        setInterval(nextSlide, 5000);
+        startAutoSlide();
     }
     
     function updateSlider() {
+        if (!sliderTrack) return;
+        
         sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
         
         // Update dots
@@ -131,16 +148,38 @@ document.addEventListener('DOMContentLoaded', function() {
     function nextSlide() {
         currentSlide = (currentSlide + 1) % slides.length;
         updateSlider();
+        resetAutoSlide();
     }
     
     function prevSlide() {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
         updateSlider();
+        resetAutoSlide();
     }
     
     function goToSlide(index) {
         currentSlide = index;
         updateSlider();
+        resetAutoSlide();
+    }
+    
+    function startAutoSlide() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+    
+    function resetAutoSlide() {
+        clearInterval(slideInterval);
+        startAutoSlide();
+    }
+    
+    // Pause auto-slide on hover
+    if (sliderTrack) {
+        sliderTrack.addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+        });
+        
+        sliderTrack.addEventListener('mouseleave', startAutoSlide);
     }
     
     // ========== CONTACT FORM ==========
@@ -154,11 +193,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const projectName = document.getElementById('projectName').value;
         const message = document.getElementById('message').value;
         
+        // Validate form
+        if (!name || !projectName || !message) {
+            alert(currentLang === 'en' 
+                ? 'Please fill in all required fields.' 
+                : 'يرجى ملء جميع الحقول المطلوبة.');
+            return;
+        }
+        
         // Format message for WhatsApp
         const formattedMessage = `*New Project Inquiry from Vortex Group Website*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A*Project Name/Idea:* ${projectName}%0A*Project Details:* ${message}`;
         
         // WhatsApp URL - CHANGE THIS TO YOUR ACTUAL NUMBER
-        const whatsappUrl = `https://wa.me/1234567890?text=${formattedMessage}`;
+        const whatsappUrl = `https://wa.me/+963945349776?text=${formattedMessage}`;
         
         // Open WhatsApp
         window.open(whatsappUrl, '_blank');
@@ -174,54 +221,44 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ========== ANIMATIONS ==========
     function initAnimations() {
-        // 3D Cube floating animation
-        const cubeContainer = document.querySelector('.cube-container');
-        if (cubeContainer) {
-            let floatValue = 0;
-            let direction = 1;
-            
-            function floatCube() {
-                floatValue += 0.005 * direction;
-                if (floatValue > 0.5 || floatValue < -0.5) {
-                    direction *= -1;
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
                 }
-                cubeContainer.style.transform = `translateY(${floatValue}rem)`;
-                requestAnimationFrame(floatCube);
+            });
+        }, observerOptions);
+        
+        // Observe elements for animation
+        document.querySelectorAll('.service-card, .team-card, .slide, .section-title').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Add CSS class for animation
+        const style = document.createElement('style');
+        style.textContent = `
+            .animate-in {
+                animation: fadeInUp 0.6s ease forwards;
             }
-            floatCube();
-        }
-        
-        // Add hover effects to interactive elements
-        const interactiveElements = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-link, .social-link, .floating-btn, .slider-btn');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                el.style.boxShadow = '0 0 15px rgba(138, 43, 226, 0.7), 0 0 25px rgba(138, 43, 226, 0.5)';
-            });
             
-            el.addEventListener('mouseleave', () => {
-                el.style.boxShadow = '';
-            });
-        });
-        
-        // 3D tilt effect for cards
-        const cards = document.querySelectorAll('.service-card, .team-card, .slide');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateY = (x - centerX) / 25;
-                const rotateX = (centerY - y) / 25;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-            });
-        });
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     }
     
     // ========== SMOOTH SCROLLING ==========
@@ -269,6 +306,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // ========== NAVBAR SCROLL EFFECT ==========
+    function initNavbarScroll() {
+        let lastScroll = 0;
+        const navbar = document.querySelector('.navbar');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll <= 0) {
+                navbar.classList.remove('scroll-up');
+                return;
+            }
+            
+            if (currentScroll > lastScroll && !navbar.classList.contains('scroll-down')) {
+                // Scroll Down
+                navbar.classList.remove('scroll-up');
+                navbar.classList.add('scroll-down');
+            } else if (currentScroll < lastScroll && navbar.classList.contains('scroll-down')) {
+                // Scroll Up
+                navbar.classList.remove('scroll-down');
+                navbar.classList.add('scroll-up');
+            }
+            
+            lastScroll = currentScroll;
+        });
+    }
+    
     // ========== INITIALIZE EVERYTHING ==========
     console.log('Initializing components...');
     
@@ -277,6 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initScrollSpy();
     initAnimations();
+    initNavbarScroll();
     
     // Add event listeners
     if (themeToggle) {
@@ -326,10 +391,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            closeMenu();
+        }
+    });
+    
     console.log('✅ Vortex Group Website Initialized Successfully!');
     
     // ========== DEBUG HELPERS ==========
-    // Add this to test buttons manually in console
     window.debugButtons = {
         toggleTheme: toggleTheme,
         toggleLanguage: toggleLanguage,
@@ -355,4 +426,10 @@ document.addEventListener('keydown', (e) => {
         const langToggle = document.getElementById('langToggle');
         if (langToggle) langToggle.click();
     }
+});
+
+// ========== LOADING ANIMATION ==========
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    console.log('🌐 Website fully loaded!');
 });
