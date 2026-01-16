@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentLang = localStorage.getItem('lang') || 'en';
     
     // FIX 1: Set the data-lang attribute on the HTML element IMMEDIATELY on page load
-    document.documentElement.setAttribute('data-lang', currentLang); // ← NEW
+    document.documentElement.setAttribute('data-lang', currentLang);
     // Initialize language
     updateLanguage();
     
@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentLang = currentLang === 'en' ? 'ar' : 'en';
         localStorage.setItem('lang', currentLang);
         
-        // FIX 2: Update the data-lang attribute on the HTML element when toggling
-        document.documentElement.setAttribute('data-lang', currentLang); // ← Ensure this is here
+        // Update the data-lang attribute on the HTML element when toggling
+        document.documentElement.setAttribute('data-lang', currentLang);
         
         updateLanguage();
         
@@ -219,46 +219,110 @@ document.addEventListener('DOMContentLoaded', function() {
             : 'تم إعداد رسالتك للواتساب. يرجى إرسالها لإكمال استفسارك.');
     }
     
-    // ========== ANIMATIONS ==========
+    // ========== FIXED ANIMATIONS - FIXED VERSION ==========
     function initAnimations() {
-        // Add scroll animations
+        // First, add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            .service-card,
+            .team-card,
+            .slide,
+            .section-title,
+            .service-icon,
+            .project-img,
+            .contact-form,
+            .contact-info {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                            transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            
+            .animate-in {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+            }
+            
+            /* Initial state for elements visible on load */
+            .hero-content,
+            .cube-container,
+            .navbar {
+                opacity: 1;
+                transform: none;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Create Intersection Observer with better settings
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            rootMargin: '0px 0px -100px 0px' // Trigger when element is 100px from viewport bottom
         };
         
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
+                // Use requestAnimationFrame to prevent flickering
+                requestAnimationFrame(() => {
+                    if (entry.isIntersecting) {
+                        // Add animation class
+                        entry.target.classList.add('animate-in');
+                        
+                        // Stop observing after animation is triggered (prevent re-triggering)
+                        observer.unobserve(entry.target);
+                    }
+                });
             });
         }, observerOptions);
         
-        // Observe elements for animation
-        document.querySelectorAll('.service-card, .team-card, .slide, .section-title').forEach(el => {
-            observer.observe(el);
-        });
-        
-        // Add CSS class for animation
-        const style = document.createElement('style');
-        style.textContent = `
-            .animate-in {
-                animation: fadeInUp 0.6s ease forwards;
-            }
+        // Observe elements for animation with a delay to prevent initial flicker
+        setTimeout(() => {
+            const elementsToAnimate = document.querySelectorAll(
+                '.service-card, .team-card, .slide, .section-title, .service-icon, .project-img, .contact-form, .contact-info'
+            );
             
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
+            elementsToAnimate.forEach(el => {
+                // Check if element is already in viewport
+                const rect = el.getBoundingClientRect();
+                const isInViewport = (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8 &&
+                    rect.bottom >= 0
+                );
+                
+                if (isInViewport) {
+                    // Element is already visible, animate immediately
+                    setTimeout(() => {
+                        el.classList.add('animate-in');
+                    }, 100);
+                } else {
+                    // Element is not visible, start observing
+                    observer.observe(el);
                 }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
+            });
+        }, 300); // Small delay to ensure page is stable
+        
+        // Handle scroll events for any elements that might have been missed
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.querySelectorAll('.service-card, .team-card, .slide, .project-img, .contact-form, .contact-info').forEach(el => {
+                    if (!el.classList.contains('animate-in')) {
+                        const rect = el.getBoundingClientRect();
+                        const isInViewport = (
+                            rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
+                            rect.bottom >= 0
+                        );
+                        
+                        if (isInViewport) {
+                            el.classList.add('animate-in');
+                            if (observer) {
+                                observer.unobserve(el);
+                            }
+                        }
+                    }
+                });
+            }, 50);
+        });
     }
     
     // ========== SMOOTH SCROLLING ==========
@@ -340,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSlider();
     initSmoothScroll();
     initScrollSpy();
-    initAnimations();
+    initAnimations(); // This is now fixed
     initNavbarScroll();
     
     // Add event listeners
@@ -432,4 +496,20 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
     console.log('🌐 Website fully loaded!');
+    
+    // Add a small delay then trigger animations for elements already in view
+    setTimeout(() => {
+        const elements = document.querySelectorAll('.service-card, .team-card, .slide, .section-title, .service-icon, .project-img, .contact-form, .contact-info');
+        elements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const isInViewport = (
+                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
+                rect.bottom >= 0
+            );
+            
+            if (isInViewport) {
+                el.classList.add('animate-in');
+            }
+        });
+    }, 500);
 });
