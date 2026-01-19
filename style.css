@@ -17,7 +17,6 @@
     --nav-blur: blur(15px);
 }
 
-/* Import Cairo font for Arabic */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
 
 /* Apply Cairo font when language is Arabic */
@@ -184,7 +183,7 @@ h1, h2, h3, h4 {
     cursor: not-allowed;
 }
 
-/* Navigation - IMPROVED */
+/* Navigation */
 .navbar {
     position: fixed;
     top: 0;
@@ -367,7 +366,7 @@ h1, h2, h3, h4 {
     flex-wrap: wrap;
 }
 
-/* 3D Cube - IMPROVED ANIMATION */
+/* 3D Cube */
 .cube-container {
     position: relative;
     width: 300px;
@@ -442,7 +441,7 @@ h1, h2, h3, h4 {
     transition: all 0.3s ease;
 }
 
-/* Better 3D positioning with subtle depth differences */
+/* Better 3D */
 .cube-face.front { 
     transform: translateZ(150px);
     background: rgba(138, 43, 226, 0.12);
@@ -1128,14 +1127,13 @@ h1, h2, h3, h4 {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
-/* =========================================== */
-/* FLOATING CONTROLS - VERTICAL STACK */
-/* =========================================== */
+
+/* floating buttn */
 
 .floating-controls {
     position: fixed;
     right: 30px;
-    top: 70%; /* Changed from 30% to 70% (30% from bottom) */
+    top: 70%;
     z-index: 1000;
 }
 
@@ -1208,9 +1206,7 @@ h1, h2, h3, h4 {
     }
 }
 
-/* =========================================== */
-/* RESPONSIVE DESIGN */
-/* =========================================== */
+/*multi device alignment*/
 
 /* Desktop */
 @media (max-width: 1200px) {
@@ -1241,16 +1237,16 @@ h1, h2, h3, h4 {
     
     .floating-controls {
         right: 25px;
-        top: 70%; /* Changed from 25% to 70% */
+        top: 70%; 
     }
 
     .project-img {
         height: 250px;
-        overflow: visible; /* Show full image without clipping */
+        overflow: visible; 
     }
     
     .project-img img {
-        object-fit: contain; /* Show entire image (no cropping) */
+        object-fit: contain;
         object-position: center;
     }
 }
@@ -1371,7 +1367,7 @@ h1, h2, h3, h4 {
     
     .floating-controls {
         right: 20px;
-        top: 70%; /* Changed from 25% to 70% */
+        top: 70%;
     }
     
     .floating-buttons {
@@ -1386,7 +1382,7 @@ h1, h2, h3, h4 {
     }
 }
 
-/* Large Mobile - IMPROVED NAVBAR */
+/* Large Mobile */
 @media (max-width: 768px) {
     .container {
         padding: 0 20px;
@@ -1536,14 +1532,14 @@ h1, h2, h3, h4 {
     /* FIXED: Project image for 768px - ensure full visibility */
     .project-img {
         height: 250px;
-        overflow: visible; /* Changed from hidden */
+        overflow: visible;
         position: relative;
     }
     
     .project-img img {
         width: 100%;
         height: 100%;
-        object-fit: contain; /* Changed from cover to contain */
+        object-fit: contain;
         object-position: center;
     }
     
@@ -1568,7 +1564,7 @@ h1, h2, h3, h4 {
     
     .floating-controls {
         right: 15px;
-        top: 70%; /* Changed from 25% to 70% */
+        top: 70%;
     }
     
     .floating-buttons {
@@ -1607,8 +1603,7 @@ h1, h2, h3, h4 {
         line-height: 1.2;
         margin-bottom: 1rem;
         position: relative;
-        z-index: 10; /* Higher than cube's z-index */
-    }
+        z-index: 10;    }
     
     .hero-subtitle {
         font-size: 0.95rem;
@@ -1855,7 +1850,7 @@ h1, h2, h3, h4 {
     
     .floating-controls {
         right: 10px;
-        top: 70%; /* Changed from 25% to 70% */
+        top: 70%;
     }
     
     .floating-buttons {
@@ -1921,7 +1916,7 @@ h1, h2, h3, h4 {
         line-height: 1.1;
         margin-bottom: 0.8rem;
         position: relative;
-        z-index: 10; /* Higher than cube's z-index */
+        z-index: 10;
     }
     
     .hero-subtitle {
@@ -2131,7 +2126,7 @@ h1, h2, h3, h4 {
     
     .floating-controls {
         right: 10px;
-        top: 70%; /* Changed from 25% to 70% */
+        top: 70%; 
     }
     
     .floating-btn {

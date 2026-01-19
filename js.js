@@ -1,11 +1,9 @@
-// ============================================
-// VORTEX GROUP WEBSITE - ENHANCED JAVASCRIPT
-// ============================================
+
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Vortex Group Website Initializing...');
     
-    // ========== THEME TOGGLE ==========
+    //  THEME TOGGLE 
     const themeToggle = document.getElementById('themeToggle');
     let currentTheme = localStorage.getItem('theme') || 'dark';
     
@@ -44,11 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // ========== LANGUAGE TOGGLE ==========
+    //  LANGUAGE TOGGLE 
     const langToggle = document.getElementById('langToggle');
     let currentLang = localStorage.getItem('lang') || 'en';
     
-    // FIX 1: Set the data-lang attribute on the HTML element IMMEDIATELY on page load
+    
     document.documentElement.setAttribute('data-lang', currentLang);
     // Initialize language
     updateLanguage();
@@ -58,17 +56,17 @@ document.addEventListener('DOMContentLoaded', function() {
         currentLang = currentLang === 'en' ? 'ar' : 'en';
         localStorage.setItem('lang', currentLang);
         
-        // Update the data-lang attribute on the HTML element when toggling
+
         document.documentElement.setAttribute('data-lang', currentLang);
         
         updateLanguage();
         
-        // DON'T change the direction - keep it LTR
+
         console.log('Language changed to:', currentLang, 'Direction remains LTR');
     }
     
     function updateLanguage() {
-        // Update button text
+
         if (langToggle) {
             const langText = langToggle.querySelector('.lang-text');
             if (langText) {
@@ -77,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             langToggle.title = currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English';
         }
         
-        // Update all translatable text on page
+        
         document.querySelectorAll('[data-en], [data-ar]').forEach(element => {
             if (element.hasAttribute(`data-${currentLang}`)) {
                 const text = element.getAttribute(`data-${currentLang}`);
@@ -93,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Language set to:', currentLang);
     }
     
-    // ========== MOBILE MENU ==========
+    //  MOBILE MENU 
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -111,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
     
-    // ========== PORTFOLIO SLIDER ==========
+    //  PORTFOLIO SLIDER 
     const sliderTrack = document.querySelector('.slider-track');
     const slides = document.querySelectorAll('.slide');
     const prevBtn = document.querySelector('.prev-btn');
@@ -182,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sliderTrack.addEventListener('mouseleave', startAutoSlide);
     }
     
-    // ========== CONTACT FORM ==========
+    //  CONTACT FORM 
     const form = document.getElementById('projectForm');
     
     function handleFormSubmit(e) {
@@ -204,24 +202,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Format message for WhatsApp
         const formattedMessage = `*New Project Inquiry from Vortex Group Website*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A*Project Name/Idea:* ${projectName}%0A*Project Details:* ${message}`;
         
-        // WhatsApp URL - CHANGE THIS TO YOUR ACTUAL NUMBER
         const whatsappUrl = `https://wa.me/+963945349776?text=${formattedMessage}`;
         
-        // Open WhatsApp
+
         window.open(whatsappUrl, '_blank');
-        
-        // Reset form
+
         form.reset();
         
-        // Show success message
+
         alert(currentLang === 'en' 
             ? 'Your message has been prepared for WhatsApp. Please send it to complete your inquiry.' 
             : 'تم إعداد رسالتك للواتساب. يرجى إرسالها لإكمال استفسارك.');
     }
     
-    // ========== FIXED ANIMATIONS - FIXED VERSION ==========
+    
     function initAnimations() {
-        // First, add CSS for animations
+
         const style = document.createElement('style');
         style.textContent = `
             .service-card,
@@ -253,28 +249,28 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
         
-        // Create Intersection Observer with better settings
+    
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px' // Trigger when element is 100px from viewport bottom
+            rootMargin: '0px 0px -100px 0px'
         };
         
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // Use requestAnimationFrame to prevent flickering
+                
                 requestAnimationFrame(() => {
                     if (entry.isIntersecting) {
-                        // Add animation class
+                        
                         entry.target.classList.add('animate-in');
                         
-                        // Stop observing after animation is triggered (prevent re-triggering)
+                        
                         observer.unobserve(entry.target);
                     }
                 });
             });
         }, observerOptions);
         
-        // Observe elements for animation with a delay to prevent initial flicker
+            
         setTimeout(() => {
             const elementsToAnimate = document.querySelectorAll(
                 '.service-card, .team-card, .slide, .section-title, .service-icon, .project-img, .contact-form, .contact-info'
@@ -298,9 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     observer.observe(el);
                 }
             });
-        }, 300); // Small delay to ensure page is stable
+        }, 300); // Small delay 
         
-        // Handle scroll events for any elements that might have been missed
+        
         let scrollTimeout;
         window.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
@@ -325,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========== SMOOTH SCROLLING ==========
+    //  SMOOTH SCROLLING 
     function initSmoothScroll() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -346,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========== SCROLL SPY ==========
+    //  SCROLL SPY 
     function initScrollSpy() {
         const sections = document.querySelectorAll('section[id]');
         
@@ -370,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========== NAVBAR SCROLL EFFECT ==========
+    //  NAVBAR SCROLL EFFECT 
     function initNavbarScroll() {
         let lastScroll = 0;
         const navbar = document.querySelector('.navbar');
@@ -397,17 +393,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========== INITIALIZE EVERYTHING ==========
+    //  INITIALIZE EVERYTHING 
     console.log('Initializing components...');
     
-    // Initialize all components
+
     initSlider();
     initSmoothScroll();
     initScrollSpy();
-    initAnimations(); // This is now fixed
+    initAnimations(); 
     initNavbarScroll();
     
-    // Add event listeners
+    
     if (themeToggle) {
         console.log('✅ Theme toggle button found');
         themeToggle.addEventListener('click', toggleTheme);
@@ -446,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', closeMenu);
     });
     
-    // Close menu when clicking outside
+    
     document.addEventListener('click', (e) => {
         if (navMenu && navMenu.classList.contains('active') && 
             !e.target.closest('.nav-menu') && 
@@ -454,8 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeMenu();
         }
     });
-    
-    // Close menu on escape key
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu.classList.contains('active')) {
             closeMenu();
@@ -463,8 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     console.log('✅ Vortex Group Website Initialized Successfully!');
-    
-    // ========== DEBUG HELPERS ==========
+
     window.debugButtons = {
         toggleTheme: toggleTheme,
         toggleLanguage: toggleLanguage,
@@ -475,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('💡 Type "debugButtons.toggleTheme()" or "debugButtons.toggleLanguage()" in console to test buttons');
 });
 
-// ========== KEYBOARD SHORTCUTS ==========
+
 document.addEventListener('keydown', (e) => {
     // Ctrl/Cmd + T for theme
     if ((e.ctrlKey || e.metaKey) && e.key === 't') {
@@ -492,12 +486,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ========== LOADING ANIMATION ==========
+
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
     console.log('🌐 Website fully loaded!');
-    
-    // Add a small delay then trigger animations for elements already in view
+
     setTimeout(() => {
         const elements = document.querySelectorAll('.service-card, .team-card, .slide, .section-title, .service-icon, .project-img, .contact-form, .contact-info');
         elements.forEach(el => {
